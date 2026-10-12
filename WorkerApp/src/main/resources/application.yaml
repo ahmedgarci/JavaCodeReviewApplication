@@ -1,0 +1,17 @@
+spring:
+  rabbitmq:
+    host: ${RABBIT_MQ_HOST:localhost}
+    port: ${RABBIT_MQ_PORT:5672}
+    username: ${RABBIT_MQ_USERNAME:guest}
+    password: ${RABBIT_MQ_PASSWORD:guest}
+    
+  application:
+    name: Worker
+
+server:
+  port: ${SERVER_PORT:8088}
+
+sonarAnalyzer:
+  token: ${SONAR_ANALYZER_TOKEN:squ_6430744bc419b7250f85011efd6dbc1ca426f470}
+  url: ${SONAR_ANALYZER_HOST:http://localhost:9090/}
+  network: ${SONAR_ANALYZER_NETWORK:hostt}

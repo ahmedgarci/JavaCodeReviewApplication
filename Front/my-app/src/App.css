@@ -1,0 +1,50 @@
+.comment-icon {
+    background-color: #4ade80;
+    width: 12px !important;
+    height: 12px !important;
+    border-radius: 50%;
+}
+
+
+.comment-widget {
+
+    background: #252526;
+    color: white;
+
+    border: 1px solid #555;
+
+    border-radius: 6px;
+
+    padding: 10px;
+
+    margin-left: 20px;
+
+    width: 600px;
+
+    font-size: 13px;
+
+    cursor: pointer;
+
+}
+
+.comment-widget:hover {
+
+    z-index: -1;
+
+}
+
+
+.comment-author {
+
+    font-weight: bold;
+
+    margin-bottom: 5px;
+
+}
+
+
+.comment-content {
+
+    color: #ddd;
+
+}

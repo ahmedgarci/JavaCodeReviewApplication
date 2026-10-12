@@ -1,0 +1,130 @@
+services:
+  sonarqube:
+    container_name: sonarqube
+    image: sonarqube:community
+    ports:
+      - "9090:9000"
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_logs:/opt/sonarqube/logs
+      - sonarqube_extensions:/opt/sonarqube/extensions
+    networks:
+      - backend
+      - sonarAnalysisNetwork
+
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3-management
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - backend
+
+  code-review-database:
+    container_name: postgres
+    image: postgres:16
+    environment:
+      POSTGRES_USER: ahmed
+      POSTGRES_PASSWORD: ahmed
+      POSTGRES_DB: code_review_db
+    volumes:
+      - database-volume:/var/lib/postgresql/data
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ahmed"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  code-review:
+    container_name: code-review-container
+    build:
+      context: ./CodeReviewApp
+      dockerfile: Dockerfile
+    environment:
+      DB_URL: jdbc:postgresql://code-review-database:5432/code_review_db
+      DB_USERNAME: ahmed
+      DB_PASSWORD: ahmed
+      RABBIT_MQ_HOST: rabbitmq
+      RABBIT_MQ_PORT: 5672
+      RABBIT_MQ_USERNAME: guest
+      RABBIT_MQ_PASSWORD: guest
+      SERVER_PORT: 8081
+      FRONT_URL: http://client:80
+    ports:
+      - "8081:8081"
+    volumes:
+      - type: bind
+        source: ./CodeReviewApp/submissions
+        target: /app/submissions
+    depends_on:
+      code-review-database:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - backend
+
+  worker:
+    container_name: worker-service
+    build:
+      context: ./WorkerApp
+      dockerfile: Dockerfile
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./WorkerApp/workspaces:/app/workspaces
+    environment:
+      RABBIT_MQ_HOST: rabbitmq
+      RABBIT_MQ_PORT: 5672
+      RABBIT_MQ_USERNAME: guest
+      RABBIT_MQ_PASSWORD: guest
+      SONAR_ANALYZER_HOST: http://sonarqube:9000
+      SERVER_PORT: 8888
+      SONAR_ANALYZER_TOKEN: squ_ff8e4322649fab771a02c8134d78ce2e438a878f
+      SONAR_ANALYZER_NETWORK: code-review-network
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      sonarqube:
+        condition: service_started
+    networks:
+      - backend
+
+  client:
+    container_name: client-app
+    build:
+      context: ./Front/my-app
+      dockerfile: Dockerfile
+    ports:
+      - "5173:80"
+    networks:
+      - backend
+
+
+
+volumes:
+  sonarqube_data:
+  sonarqube_logs:
+  sonarqube_extensions:
+  rabbitmq_data:
+  database-volume:
+
+networks:
+  backend:
+    name: code-review-network
+    driver: bridge
+  sonarAnalysisNetwork:
+    name: sonar-analysis-network
+    driver: bridge
