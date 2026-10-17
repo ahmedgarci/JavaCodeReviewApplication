@@ -6,7 +6,7 @@ on:
     branches:
       - main
     paths:
-      - 'ClientApp/**'
+      - 'Front/my-app/**'
       - '.github/workflows/client.yml'
 
 jobs:
