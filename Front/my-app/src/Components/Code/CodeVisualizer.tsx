@@ -29,29 +29,11 @@ export default function CodeVisualizer({submissionId,fileId,fileName,isEditable}
     const [selectedLine, setSelectedLine] =useState<number | null>(null);
     const [isCommentModalOpen, setIsCommentModalOpen] =useState(false);
 
-    /*
-        When Monaco is mounted
-    */
-    const handleEditorMount = (
-        editorInstance: editor.IStandaloneCodeEditor
-    ) => {
+    const handleEditorMount = (editorInstance: editor.IStandaloneCodeEditor) => {setEditorInstance(editorInstance);};
 
-        setEditorInstance(editorInstance);
-
-    };
-
-
-
-
-    /*
-        Detect click on glyph margin
-    */
     useEffect(() => {
-
         if (!editorInstance)
             return;
-
-
         const disposable =editorInstance.onMouseDown((event) => {
                 if (event.target.type !==monaco.editor.MouseTargetType.GUTTER_GLYPH_MARGIN) {
                     return;
@@ -118,13 +100,6 @@ export default function CodeVisualizer({submissionId,fileId,fileName,isEditable}
 
     }, [editorInstance, fileData]);
 
-
-
-
-
-    /*
-        Display comments inside editor
-    */
     useEffect(() => {
 
 
