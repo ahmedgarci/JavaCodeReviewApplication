@@ -37,7 +37,9 @@ public class ReviewService {
     private final SonarResultRetriverService resultRetriverService;
 
     public void analyze(JobDto jobDto){
+
         System.out.println("exec : "+jobDto.executionId()+ "p_id : "+jobDto.projectId()+ "sub: "+ jobDto.submissionId());
+
         Path workspace =Paths.get("workspaces",UUID.randomUUID().toString()).toAbsolutePath().normalize();
 
         try {
