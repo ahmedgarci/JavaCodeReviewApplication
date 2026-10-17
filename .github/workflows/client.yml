@@ -6,7 +6,7 @@ on:
     branches:
       - main
     paths:
-      - 'Front/**'
+      - 'Front/my-app/**'
       - '.github/workflows/client.yml'
 
 jobs:
@@ -22,14 +22,14 @@ jobs:
         with:
           node-version: '18'
           cache: npm
-          cache-dependency-path: ClientApp/package-lock.json
+          cache-dependency-path: Front/my-app/package-lock.json
 
       - name: Install dependencies
-        working-directory: ./ClientApp
+        working-directory: ./Front/my-app
         run: npm ci
 
       - name: Build client
-        working-directory: ./ClientApp
+        working-directory: ./Front/my-app
         run: npm run build
 
       - name: Login to Docker Hub
@@ -41,7 +41,7 @@ jobs:
       - name: Build and push client image
         uses: docker/build-push-action@v6
         with:
-          context: ./ClientApp
+          context: ./Front/my-app
           push: true
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/client:latest
