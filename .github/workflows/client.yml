@@ -1,0 +1,45 @@
+name: client-application-workflow
+
+on:
+  push:
+    branches:
+      - main
+  paths:
+    - 'ClientApp/**'
+    - '.github/workflows/client.yml'
+
+steps:
+  checkout:
+    uses: actions/checkout@v3
+    name: checkout repository
+
+    name : set up node
+    uses: actions/setup-node@v3
+    with:
+      node-version: '18'
+      cache: 'npm'
+    
+    name: install dependencies
+    working-directory: ./ClientApp
+    run: npm install
+
+    name: build client
+    working-directory: ./ClientApp
+    run: npm build
+
+    name: login to docker hub
+    uses: docker/login-action@v3
+    with:
+      username: ${{ secrets.DOCKER_USERNAME }}
+      password: ${{ secrets.DOCKER_PASSWORD }} 
+
+    name: build and push client image
+    uses: docker/build-push-action@v6
+    with:
+      context: ./ClientApp
+      push: true
+      tags: |
+        ${{ secrets.DOCKER_USERNAME }}/client:latest
+        ${{ secrets.DOCKER_USERNAME }}/client:${{ github.sha }}
+
+
