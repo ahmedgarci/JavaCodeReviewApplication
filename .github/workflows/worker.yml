@@ -3,10 +3,11 @@ name: worker-application-workflow
 on:
   push:
     branches:
-      - main
+      - master
     paths:
       - 'WorkerApp/**'
       - '.github/workflows/worker.yml'
+
 
 jobs:
   build-and-push:
