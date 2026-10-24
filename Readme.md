@@ -45,7 +45,7 @@ Sonar reviews are validated against these thresholds.
 
 ## Architecture
 
-![High level design](docs/architecture.png)
+<img width="1832" height="734" alt="shapes at 26-10-16 23 00 02" src="https://github.com/user-attachments/assets/d8d36072-e9da-4a1c-8de8-c6add330f1fc" />
 
 The system is split into a synchronous API and an asynchronous analysis pipeline connected by a message queue:
 
@@ -72,7 +72,7 @@ Each submission has a `review_type` that decides how it is reviewed.
 
 ## Database Design
 
-![Entity relationship diagram](docs/erd.png)
+<img width="2835" height="2622" alt="erd" src="https://github.com/user-attachments/assets/c147a408-7800-4ba4-a9dd-7434ce0e5813" />
 
 | Domain | Tables |
 |--------|--------|
@@ -250,8 +250,3 @@ sequenceDiagram
 - Default credentials (`ahmed/ahmed`, `guest/guest`) are for local development only. Change them before any real deployment.
 - Never commit a SonarQube token. If one was committed previously, **revoke it in SonarQube and generate a new one**.
 
-
-
-## License
-
-No license has been specified yet. Add a `LICENSE` file (for example MIT) to define how others may use this project.
