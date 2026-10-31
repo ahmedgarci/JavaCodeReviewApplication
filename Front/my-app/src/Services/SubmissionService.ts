@@ -1,4 +1,5 @@
 import api from "./Api/api";
+import { v4 as uuidv4 } from "uuid";
 
 export interface SubmissionData {
   title: string;
@@ -29,7 +30,7 @@ export async function createSubmission(projectId: number,data: SubmissionData,fi
     );
   });
 
-  const IdempotencyKey = crypto.randomUUID();
+  const IdempotencyKey = uuidv4();
 
 
   try {
