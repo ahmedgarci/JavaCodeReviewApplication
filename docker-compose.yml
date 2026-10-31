@@ -119,6 +119,11 @@ services:
       - "5173:80"
     networks:
       - backend
+  Analyer:
+    image: garciahmed/java-analyzer
+    container_name: code-analyzer
+    networks:
+      - backend
 
 
 
