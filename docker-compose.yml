@@ -53,7 +53,7 @@ services:
     # build:
     #   context: ./CodeReviewApp
     #   dockerfile: Dockerfile
-    image: garciahmed/code-review
+    image: garciahmed/code-review:latest
     environment:
       DB_URL: jdbc:postgresql://code-review-database:5432/${POSTGRES_DB}
       DB_USERNAME: ${POSTGRES_USER}
