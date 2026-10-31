@@ -4,8 +4,9 @@ import axios, {
 
 import type { SuccessFulAuthentication } from "../../Models/AuthResponse";
 
-//const API_URL = "/api";
-const API_URL = "http://localhost:8081/api";
+// const API_URL = "http://localhost:8081/api";
+
+const API_URL = "/api";
 
 const publicApi = axios.create({
   baseURL: API_URL,
