@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { CreateComment } from "../../Services/CommentService";
+import { toast } from "react-toastify";
 
 
 interface CommentModalProps {
@@ -40,16 +41,13 @@ export default function CommentModal({
 
             setLoading(true);
 
-            CreateComment(submissionId,fileId,lineNumber as number,content);
+            await CreateComment(submissionId,fileId,lineNumber as number,content);
             
             setContent("")
-
-
+            
         } catch(error) {
-
-
             console.error(error);
-
+            toast.error("user is not allowed to review this submission.");
 
         } finally {
 

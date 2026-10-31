@@ -362,14 +362,7 @@ export default function SubmissionDetailsPage() {
 
 
                     <button
-
-                      onClick={()=>
-                        setSelectedFile({
-                          id:file.id,
-                          name:file.filename
-                        })
-                      }
-
+                      onClick={()=>setSelectedFile({id:file.id,name:file.filename})}
                       className="
                         px-4
                         py-2

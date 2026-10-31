@@ -18,13 +18,15 @@ import lombok.RequiredArgsConstructor;
 public class SonarAnalyzerImpl implements IProcessBuilder {
 
     private final RestClient restClient;
-    @Value ("${sonarAnalyzer.token}")
+
+    @Value("${sonarAnalyzer.token}")
     private String token;
-//    @Value("${sonarAnalyzer.url}")
-    private String sonarUrl = "http://sonarqube:9000/";
+
+    @Value("${sonarAnalyzer.url}")
+    private String sonarUrl;
 
     @Value("${sonarAnalyzer.network}")
-    private String sonarNetwork;    
+    private String sonarNetwork;
 
     @Override
     public String execute(Path workspace, String key) throws Exception {
