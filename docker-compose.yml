@@ -19,8 +19,8 @@ services:
       - "15672:15672"
       - "5672:5672"
     environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     healthcheck:
@@ -35,40 +35,42 @@ services:
     container_name: postgres
     image: postgres:16
     environment:
-      POSTGRES_USER: ahmed
-      POSTGRES_PASSWORD: ahmed
-      POSTGRES_DB: code_review_db
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - database-volume:/var/lib/postgresql/data
     networks:
       - backend
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ahmed"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
       interval: 30s
       timeout: 10s
       retries: 5
 
   code-review:
     container_name: code-review-container
-    build:
-      context: ./CodeReviewApp
-      dockerfile: Dockerfile
+    # build:
+    #   context: ./CodeReviewApp
+    #   dockerfile: Dockerfile
+    image: garciahmed/code-review
     environment:
-      DB_URL: jdbc:postgresql://code-review-database:5432/code_review_db
-      DB_USERNAME: ahmed
-      DB_PASSWORD: ahmed
+      DB_URL: jdbc:postgresql://code-review-database:5432/${POSTGRES_DB}
+      DB_USERNAME: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
       RABBIT_MQ_HOST: rabbitmq
       RABBIT_MQ_PORT: 5672
-      RABBIT_MQ_USERNAME: guest
-      RABBIT_MQ_PASSWORD: guest
+      RABBIT_MQ_USERNAME: ${RABBITMQ_USER}
+      RABBIT_MQ_PASSWORD: ${RABBITMQ_PASSWORD}
       SERVER_PORT: 8081
-      FRONT_URL: http://client:80
+      FRONT_URL: ${FRONT_URL}
     ports:
       - "8081:8081"
     volumes:
-      - type: bind
-        source: ./CodeReviewApp/submissions
-        target: /app/submissions
+      # - type: bind
+      #   source: ./CodeReviewApp/submissions
+      #   target: /app/submissions
+      - submissions-volume:/app/submissions
     depends_on:
       code-review-database:
         condition: service_healthy
@@ -79,20 +81,21 @@ services:
 
   worker:
     container_name: worker-service
-    build:
-      context: ./WorkerApp
-      dockerfile: Dockerfile
+    # build:
+    #   context: ./WorkerApp
+    #   dockerfile: Dockerfile
+    image: garciahmed/worker
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./WorkerApp/workspaces:/app/workspaces
+      - worker-workspaces-volume:/app/workspaces
     environment:
       RABBIT_MQ_HOST: rabbitmq
       RABBIT_MQ_PORT: 5672
-      RABBIT_MQ_USERNAME: guest
-      RABBIT_MQ_PASSWORD: guest
+      RABBIT_MQ_USERNAME: ${RABBITMQ_USER}
+      RABBIT_MQ_PASSWORD: ${RABBITMQ_PASSWORD}
       SONAR_ANALYZER_HOST: http://sonarqube:9000
       SERVER_PORT: 8888
-      SONAR_ANALYZER_TOKEN: squ_ff8e4322649fab771a02c8134d78ce2e438a878f
+      SONAR_ANALYZER_TOKEN: ${SONAR_ANALYZER_TOKEN}
       SONAR_ANALYZER_NETWORK: code-review-network
     depends_on:
       rabbitmq:
@@ -104,9 +107,12 @@ services:
 
   client:
     container_name: client-app
-    build:
-      context: ./Front/my-app
-      dockerfile: Dockerfile
+    # build:
+    #   context: ./Front/my-app
+    #   dockerfile: Dockerfile
+    image: garciahmed/client
+    environment:
+      BACKEND_URL: http://code-review:8081 
     ports:
       - "5173:80"
     networks:
@@ -120,6 +126,8 @@ volumes:
   sonarqube_extensions:
   rabbitmq_data:
   database-volume:
+  submissions-volume:
+  worker-workspaces-volume:
 
 networks:
   backend:
@@ -128,3 +136,4 @@ networks:
   sonarAnalysisNetwork:
     name: sonar-analysis-network
     driver: bridge
+
