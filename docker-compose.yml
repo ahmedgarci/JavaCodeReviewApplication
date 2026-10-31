@@ -64,6 +64,8 @@ services:
       RABBIT_MQ_PASSWORD: ${RABBITMQ_PASSWORD}
       SERVER_PORT: 8081
       FRONT_URL: ${FRONT_URL}
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
     ports:
       - "8081:8081"
     volumes:
