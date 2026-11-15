@@ -59,7 +59,7 @@ public class SonarAnalyzerImpl implements IProcessBuilder {
    "mvn",
     "clean",
     "verify",
-    "sonar:sonar",
+    "org.sonarsource.scanner.maven:sonar-maven-plugin:5.5.0.6356:sonar",
     "-Dsonar.projectKey=" + key,
     "-Dsonar.host.url=" + sonarUrl,
     "-Dsonar.token=" + token
