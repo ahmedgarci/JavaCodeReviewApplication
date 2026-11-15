@@ -89,7 +89,7 @@ services:
     image: garciahmed/worker
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - worker-workspaces-volume:/app/workspaces
+      - app/workspaces:/app/workspaces
     environment:
       RABBIT_MQ_HOST: rabbitmq
       RABBIT_MQ_PORT: 5672
@@ -134,7 +134,7 @@ volumes:
   rabbitmq_data:
   database-volume:
   submissions-volume:
-  worker-workspaces-volume:
+  app/workspaces:
 
 networks:
   backend:
