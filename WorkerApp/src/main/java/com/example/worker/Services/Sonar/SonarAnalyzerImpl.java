@@ -56,8 +56,8 @@ public class SonarAnalyzerImpl implements IProcessBuilder {
 
     "--entrypoint",
     "sh",
-    "code-analyzer",
-
+    "garciahmed/java-analyzer:latest",
+    
     "-c",
     "ls -la /workspace && find /workspace -maxdepth 2 -name pom.xml"
 );
