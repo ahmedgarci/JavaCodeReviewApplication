@@ -54,12 +54,15 @@ public class SonarAnalyzerImpl implements IProcessBuilder {
     "-w",
     "/workspace",
 
-    "--entrypoint",
-    "sh",
     "garciahmed/java-analyzer:latest",
     
-    "-c",
-    "ls -la /workspace && find /workspace -maxdepth 2 -name pom.xml"
+   "mvn",
+    "clean",
+    "verify",
+    "sonar:sonar",
+    "-Dsonar.projectKey=" + key,
+    "-Dsonar.host.url=" + sonarUrl,
+    "-Dsonar.token=" + token
 );
         
         builder.directory(absolutePath.toFile());
@@ -82,15 +85,13 @@ public class SonarAnalyzerImpl implements IProcessBuilder {
             throw new RuntimeException("Project build / Sonar analysis failed. Maven/Docker exit code: " + exitCode);        
     
         }
-        String issues = getIssues(key);
-
-        return issues;
-
+        return getIssues(key);
     }
 
     private String getIssues(String projectKey) {
 
         System.out.println("retrieving issuues");
+
         return restClient
                 .get()
                 .uri("api/issues/search?componentKeys=" + projectKey)
